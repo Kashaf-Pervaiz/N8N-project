@@ -1,0 +1,446 @@
+{
+  "name": "kpi",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -480,
+        80
+      ],
+      "id": "f7c534be-736a-4bf6-9923-e09a42738ccc",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1aAjEE8P465Ku3HVp5HdkyhVP96ejG3u3ub0ZoQ8FrRc",
+          "mode": "list",
+          "cachedResultName": "Fact_Sales",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aAjEE8P465Ku3HVp5HdkyhVP96ejG3u3ub0ZoQ8FrRc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aAjEE8P465Ku3HVp5HdkyhVP96ejG3u3ub0ZoQ8FrRc/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -256,
+        -208
+      ],
+      "id": "65818399-bcc1-4518-b3e0-d63064c2a1fa",
+      "name": "Fact_Sales",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Ps_6nqWmx7JPDHBwAxGjzLuTSnEMng-c2yE8aTdIgBU",
+          "mode": "list",
+          "cachedResultName": "Dim_Customer",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ps_6nqWmx7JPDHBwAxGjzLuTSnEMng-c2yE8aTdIgBU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ps_6nqWmx7JPDHBwAxGjzLuTSnEMng-c2yE8aTdIgBU/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -256,
+        176
+      ],
+      "id": "430048ff-2a51-41a8-aa58-d88fe341ec3e",
+      "name": "Dim_Customers",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "133bui9vK5BfdwSfkgP35JcIkvNbJ0ucDNEOA9yqcJ7M",
+          "mode": "list",
+          "cachedResultName": "Dim_Product",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/133bui9vK5BfdwSfkgP35JcIkvNbJ0ucDNEOA9yqcJ7M/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/133bui9vK5BfdwSfkgP35JcIkvNbJ0ucDNEOA9yqcJ7M/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -256,
+        -16
+      ],
+      "id": "717ed5fc-d14f-4a70-b2cb-6edb89d071d3",
+      "name": "Dim_Product",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1k-cVaCySleV9MzLnk7TVaSifVvxCwhz_GZmQ9to_h3g",
+          "mode": "list",
+          "cachedResultName": "Dim_Region",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1k-cVaCySleV9MzLnk7TVaSifVvxCwhz_GZmQ9to_h3g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1k-cVaCySleV9MzLnk7TVaSifVvxCwhz_GZmQ9to_h3g/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -256,
+        368
+      ],
+      "id": "9f6d3b05-7d09-4e82-a9ee-d87d45a2ea58",
+      "name": "Dim_Region",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1c8H4Y8ER7zESTsVPVZEiN3DiPyW2BOJ3DKyjpNp4nN0",
+          "mode": "list",
+          "cachedResultName": "Dim_Date",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c8H4Y8ER7zESTsVPVZEiN3DiPyW2BOJ3DKyjpNp4nN0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c8H4Y8ER7zESTsVPVZEiN3DiPyW2BOJ3DKyjpNp4nN0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -240,
+        528
+      ],
+      "id": "12b65dec-d220-48e3-9381-bb71421092e8",
+      "name": "Dim_Date",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        112,
+        176
+      ],
+      "id": "1557e270-8bd3-41f9-a09c-a7796f909ab8",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nlet totalRevenue = 0;\nlet totalProfit = 0;\nlet totalQuantity = 0;\nconst byRegion = {};\nconst byProduct = {};\n\nfor (const item of items) {\n  const revenue = Number(item.json.Revenue) || 0;\n  const profit = Number(item.json.Profit) || 0;\n  const quantity = Number(item.json.Quantity) || 0;\n  const region = item.json.Region || 'Unknown';\n  const product = item.json.Product || 'Unknown';\n\n  totalRevenue += revenue;\n  totalProfit += profit;\n  totalQuantity += quantity;\n\n  byRegion[region] = (byRegion[region] || 0) + revenue;\n  byProduct[product] = (byProduct[product] || 0) + revenue;\n}\n\nreturn [{\n  json: {\n    totalRevenue,\n    totalProfit,\n    totalQuantity,\n    profitMargin: ((totalProfit / totalRevenue) * 100).toFixed(2) + '%',\n    revenueByRegion: byRegion,\n    revenueByProduct: byProduct\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        176
+      ],
+      "id": "efed887e-51cd-4485-9bad-2383b60ceaa7",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\nRevenue and Profits:Generate a professional Weekly KPI Sales Report as a complete HTML email with this exact data:\n\nTotal Revenue: {{$json.totalRevenue}}\nTotal Profit: {{$json.totalProfit}}\nTotal Quantity Sold: {{$json.totalQuantity}}\nProfit Margin: {{$json.profitMargin}}\nAverage Order Value: {{Math.round($json.totalRevenue / 5)}}\n\nRevenue by Region:\n- Lahore: {{$json.revenueByRegion.Lahore}}\n- Karachi: {{$json.revenueByRegion.Karachi}}\n- Islamabad: {{$json.revenueByRegion.Islamabad}}\n\nRevenue by Product:\n- Wireless Mouse: {{$json.revenueByProduct['Wireless Mouse']}}\n- Keyboard: {{$json.revenueByProduct.Keyboard}}\n- Monitor: {{$json.revenueByProduct.Monitor}}\n\nDesign Requirements:\n1. Dark navy blue header with \"Weekly KPI Report\" title and current date\n2. Executive Summary paragraph explaining the numbers\n3. KPI Cards section with 4 colorful cards:\n   - Orange card: Total Revenue\n   - Green card: Total Profit\n   - Purple card: Profit Margin\n   - Red card: Avg Order Value\n4. Revenue by Region table with styled rows\n5. Revenue by Product table with styled rows\n6. Top performing region and product highlighted\n7. AI insights paragraph at the bottom\n8. All amounts in Rs (Pakistani Rupees)\n9. Professional fonts and clean layout\n10. Return ONLY the HTML code, nothing else",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        528,
+        176
+      ],
+      "id": "af8ee35b-005d-40fa-9ecb-3118293b0403",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "google/gemma-3-4b-it",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        464,
+        384
+      ],
+      "id": "2b0e401b-414c-4491-a945-77d3b75aafa0",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "VOqVRzsNNaGeFhUA",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extracts clean HTML from Groq/OpenAI response\nconst items = $input.all();\nconst raw = items[0].json;\n\n// n8n surfaces Groq response in different places depending on node type\nlet htmlReport =\n  raw?.message?.content ||\n  raw?.text ||\n  raw?.content ||\n  JSON.stringify(raw);\n\n// Strip markdown code fences if model wrapped output in ```html ... ```\nif (typeof htmlReport === 'string' && htmlReport.includes('```')) {\n  htmlReport = htmlReport\n    .split('\\n')\n    .filter(line => !line.trim().startsWith('```'))\n    .join('\\n')\n    .trim();\n}\n\nreturn [{ json: { html_report: htmlReport } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        176
+      ],
+      "id": "18942bf6-84fa-4117-9951-a945a32bbabb",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "sendTo": "www.kashaf769pervaiz@gmail.com",
+        "subject": "KPI report weekly",
+        "message": "={{ $('Basic LLM Chain').item.json.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1088,
+        176
+      ],
+      "id": "5e01c37a-afa9-487e-b7ed-3215cc6086e8",
+      "name": "Send a message",
+      "webhookId": "9eaa73bd-38b0-43c3-836a-8a403e4dfcec",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UDN9AhzK2U9kM14I",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fact_Sales",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dim_Customers",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dim_Product",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dim_Region",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dim_Date",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dim_Customers": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Dim_Date": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Fact_Sales": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dim_Product": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Dim_Region": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5229f1f0-aafa-4860-815b-eca5c52cb8a6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dd592145a5c72f485a7c0ff181533ebe1b96d9ee088109b80d9e8407d87ddfc4"
+  },
+  "id": "iTY7JculdthPyplO",
+  "tags": []
+}
