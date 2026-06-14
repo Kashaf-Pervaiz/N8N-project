@@ -1,0 +1,252 @@
+{
+  "name": "LEAD gen INSTAGRAM",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Instagram lead scappers",
+        "formDescription": "get all leads from  instagram  directly to the airtables",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "who are you looking for?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Location",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -480,
+        -32
+      ],
+      "id": "3a533707-1fdd-44d2-902b-9fff43c290e3",
+      "name": "On form submission",
+      "webhookId": "3737677b-5304-4f84-9850-82cb5a5e401f"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/actors/apify~google-search-scraper/run-sync-get-dataset-items?token=YOUR_API_KEY_HERE",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"chatGptSearch\": {\n        \"enableChatGpt\": false\n    },\n    \"copilotSearch\": {\n        \"enableCopilot\": false\n    },\n    \"disableGoogleSearchResults\": false,\n    \"focusOnPaidAds\": false,\n    \"forceExactMatch\": false,\n    \"geminiSearch\": {\n        \"enableGemini\": false\n    },\n    \"includeIcons\": false,\n    \"includeUnfilteredResults\": false,\n    \"maxPagesPerQuery\": 1,\n    \"maximumLeadsEnrichmentRecords\": 0,\n    \"mobileResults\": false,\n    \"perplexitySearch\": {\n        \"enablePerplexity\": false,\n        \"returnImages\": false,\n        \"returnRelatedQuestions\": false\n    },\n    \"queries\": \"site:instagram.com + {{ $json['who are you looking for?'] }} {{ $json.Location }}\",\n    \"saveHtml\": false,\n    \"saveHtmlToKeyValueStore\": true,\n    \"verifyLeadsEnrichmentEmails\": false\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -272,
+        -32
+      ],
+      "id": "9d2e5533-b1bc-44b7-9e0c-96c290bceb40",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -64,
+        -32
+      ],
+      "id": "19966110-6c65-4c5a-988b-a90ba78fea03",
+      "name": "Wait",
+      "webhookId": "976e1387-0fc9-408d-bdb8-a961eb5aea44"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node — Extract Instagram structured data from Apify search results\n\nconst results = $input.all();\nconst structured = [];\n\n// Convert \"1.8K+ followers\" → 1800\nfunction parseFollowers(str) {\n  if (!str) return null;\n  const clean = str.toLowerCase().replace(/followers|\\+|,|\\s/g, '').trim();\n  if (clean.includes('k')) return Math.round(parseFloat(clean) * 1000);\n  if (clean.includes('m')) return Math.round(parseFloat(clean) * 1000000);\n  return parseInt(clean) || null;\n}\n\nfor (const item of results) {\n  const data = Array.isArray(item.json) ? item.json : [item.json];\n\n  for (const entry of data) {\n    const organicResults = Array.isArray(entry.organicResults)\n      ? entry.organicResults\n      : [];\n\n    for (const result of organicResults) {\n      if (\n        result.url &&\n        result.url.includes(\"instagram.com\") &&\n        result.channelName\n      ) {\n        structured.push({\n          json: {\n            name: result.channelName || null,\n            instagram_url: result.url || null,\n            displayed_url: result.displayedUrl || null,\n            followers: parseFollowers(result.followersAmount),  // ← CHANGED\n            description: result.description || null,\n            services: result.emphasizedKeywords\n              ? result.emphasizedKeywords.join(\", \")\n              : null,\n            position: result.position ?? null,\n            type: result.type || null,\n          },\n        });\n      }\n    }\n  }\n}\n\nreturn structured;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        -32
+      ],
+      "id": "53a9e3cd-c66c-4f41-ba57-a8376f841f70",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "applakkkOQGZzclXx",
+          "mode": "list",
+          "cachedResultName": "lead gens",
+          "cachedResultUrl": "https://airtable.com/applakkkOQGZzclXx"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblIO2LxnItbuIHqQ",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/applakkkOQGZzclXx/tblIO2LxnItbuIHqQ"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.name }}",
+            "Instagram url": "={{ $json.instagram_url }}",
+            "Description": "={{ $json.description }}",
+            "Username": "={{ $json.name }}",
+            "Followers": "={{ $json.followers }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Instagram url",
+              "displayName": "Instagram url",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Followers",
+              "displayName": "Followers",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachment Summary",
+              "displayName": "Attachment Summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        352,
+        -32
+      ],
+      "id": "65e6e4e9-3251-474d-b81f-00534b315352",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "YxPRPHW2iVgB7zz1",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f7d25de2-e454-4ec7-8e11-c01ff0384aae",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dd592145a5c72f485a7c0ff181533ebe1b96d9ee088109b80d9e8407d87ddfc4"
+  },
+  "id": "oCuv1exalaJTb3UQ",
+  "tags": []
+}
