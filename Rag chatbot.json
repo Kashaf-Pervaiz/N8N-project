@@ -1,0 +1,152 @@
+{
+  "name": "Rag chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -384,
+        -64
+      ],
+      "id": "6a56e981-a193-4296-bff3-b1eceb944908",
+      "name": "When chat message received",
+      "webhookId": "44b23d80-dc81-4b75-afed-fa832a7810e2"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant. Use the search tool when needed. Keep answers brief."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -176,
+        -64
+      ],
+      "id": "4c082ce5-2261-4242-9fb2-005106957e66",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 3
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -176,
+        144
+      ],
+      "id": "e0e45404-c1a5-4fd1-b957-306f0363cdc9",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to search Google for real-time information. Input should be a search query string.",
+        "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search_Query__q_', ``, 'string') }}",
+        "location": "=",
+        "additionalFields": {
+          "num": "3"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-serpapi.serpApiTool",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        160
+      ],
+      "id": "89a7a10f-de6f-4076-aba2-7805db5c9667",
+      "name": "Google search in SerpApi1",
+      "credentials": {
+        "serpApi": {
+          "id": "Yl7RK90DS7O3NCQk",
+          "name": "SerpApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3.6-27b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        160
+      ],
+      "id": "d7e9799a-1443-4f78-885d-f0267e2c2457",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "sDrlQUxzL5qElLud",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google search in SerpApi1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "98111446-ae38-4f6c-874a-671b5bff58ee",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dd592145a5c72f485a7c0ff181533ebe1b96d9ee088109b80d9e8407d87ddfc4"
+  },
+  "id": "g6oOzfCQ7JX0baZS",
+  "tags": []
+}
