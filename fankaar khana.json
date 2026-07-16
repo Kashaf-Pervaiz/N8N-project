@@ -1,0 +1,3079 @@
+{
+  "name": "fankaar khana",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "customer-message",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -416,
+        -48
+      ],
+      "id": "783363df-fea4-41f7-ae92-9ddbbc057fc7",
+      "name": "Webhook",
+      "webhookId": "5399bdba-3db6-4999-8d7c-7876c8069097"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "88dba3f9-05b0-43fa-ab43-1607986a713d",
+              "name": "channel",
+              "value": "=whatsapp\n",
+              "type": "string"
+            },
+            {
+              "id": "5f31e58c-2d9b-4da4-b23a-cfff0da115f6",
+              "name": "customerID",
+              "value": "={{ $json.body.data.messages.key.cleanedSenderPn }}",
+              "type": "string"
+            },
+            {
+              "id": "c9539ed1-1758-4b9a-a24c-0f2dbd200157",
+              "name": "customerName",
+              "value": "={{ $json.body.data.messages.pushName }}",
+              "type": "string"
+            },
+            {
+              "id": "ddbf4c5c-9883-4f49-b37f-0820345c10b8",
+              "name": "message",
+              "value": "={{ $json.body.data.messages.message.conversation }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        -48
+      ],
+      "id": "a6985671-0635-4454-9f41-140882f6bc0f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1JFCrQHq7dmVRo416OYuuomT4cnpZdApkUXKVg0uQ5Wo",
+          "mode": "list",
+          "cachedResultName": "customer",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JFCrQHq7dmVRo416OYuuomT4cnpZdApkUXKVg0uQ5Wo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JFCrQHq7dmVRo416OYuuomT4cnpZdApkUXKVg0uQ5Wo/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "customerID",
+              "lookupValue": "={{ $json.customerID }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        -48
+      ],
+      "id": "db8261ba-523a-4b12-b3f0-c3d644da3044",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "836bc87f-742f-44fd-a0ce-1aba9f6c7b9f",
+              "leftValue": "={{ $('Get row(s) in sheet').all().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        -48
+      ],
+      "id": "7ac3df76-94e2-48ca-b311-3e2573d4edd2",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        416,
+        -48
+      ],
+      "id": "b34671d3-fea3-4380-9e1d-2d43965264f6",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "sDrlQUxzL5qElLud",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        384,
+        336
+      ],
+      "id": "9925668d-6eeb-46bf-90f0-5840d8e3e0ad",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "sDrlQUxzL5qElLud",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.message }}",
+        "options": {
+          "systemMessage": "=You are a friendly sales assistant. This is a RETURNING customer.\nTheir name is {{ $('Edit Fields').item.json.customerName }}. \nGreet them personally. Ask if they want to place a new order \nor check their existing order status."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        400,
+        112
+      ],
+      "id": "eb34efdb-6e54-452e-9de4-d3eb4fc70d98",
+      "name": "returning customer"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a friendly sales assistant. This is a NEW customer. \nGreet them warmly. Ask for their name, email, and location \nto process their order. Help them with product questions."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        432,
+        -224
+      ],
+      "id": "a64cb016-f9da-4789-ae20-fcebc2aa6b1f",
+      "name": "NEW_ CUSTOMER"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1JFCrQHq7dmVRo416OYuuomT4cnpZdApkUXKVg0uQ5Wo",
+          "mode": "list",
+          "cachedResultName": "customer",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JFCrQHq7dmVRo416OYuuomT4cnpZdApkUXKVg0uQ5Wo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JFCrQHq7dmVRo416OYuuomT4cnpZdApkUXKVg0uQ5Wo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "new",
+            "location": "={{ $json.location }}",
+            "email": "={{ $json.email }}",
+            "customerName": "={{ $json.customerName }}",
+            "customerID": "={{ $json.customerID }}",
+            "totalOrders": "1"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "customerID",
+              "displayName": "customerID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customerName",
+              "displayName": "customerName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "totalOrders",
+              "displayName": "totalOrders",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        784,
+        -224
+      ],
+      "id": "c08d1155-3305-4a61-9daa-e1f5f14a4eca",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1JFCrQHq7dmVRo416OYuuomT4cnpZdApkUXKVg0uQ5Wo",
+          "mode": "list",
+          "cachedResultName": "customer",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JFCrQHq7dmVRo416OYuuomT4cnpZdApkUXKVg0uQ5Wo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JFCrQHq7dmVRo416OYuuomT4cnpZdApkUXKVg0uQ5Wo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "customerID": "={{ $('Edit Fields').item.json.customerID }}",
+            "totalOrders": "={{ $('Get row(s) in sheet').item.json.totalOrders + 1 }}",
+            "status": "returning"
+          },
+          "matchingColumns": [
+            "customerID"
+          ],
+          "schema": [
+            {
+              "id": "customerID",
+              "displayName": "customerID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "customerName",
+              "displayName": "customerName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "totalOrders",
+              "displayName": "totalOrders",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        752,
+        112
+      ],
+      "id": "3a5a65dd-7744-4e51-96d0-a9b84ace855b",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0",
+          "mode": "list",
+          "cachedResultName": "orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "orderID": "={{ $now.toMillis() }}",
+            "customerID": "={{ $json.customerID }}",
+            "customerName": "={{ $json.customerName }}",
+            "status": "=\tPending",
+            "location": "={{ $json.location }}",
+            "product": "={{ $json.message }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "orderID",
+              "displayName": "orderID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customerID",
+              "displayName": "customerID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customerName",
+              "displayName": "customerName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "product",
+              "displayName": "product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        992,
+        -224
+      ],
+      "id": "dd212e06-51d7-4be0-9d9f-115377ca2e46",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0",
+          "mode": "list",
+          "cachedResultName": "orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "orderID": "={{ $now.toMillis() }}",
+            "customerID": "={{ $json.customerID }}",
+            "customerName": "={{ $('Edit Fields').item.json.customerName }}",
+            "status": "=\tPending",
+            "product": "={{ $('Edit Fields').item.json.message }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "orderID",
+              "displayName": "orderID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customerID",
+              "displayName": "customerID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customerName",
+              "displayName": "customerName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "product",
+              "displayName": "product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1024,
+        112
+      ],
+      "id": "7ffa8be7-125a-48de-9ab7-2fea0e1abb2e",
+      "name": "Append row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "www.kashaf769pervaiz@gmail.com",
+        "subject": "=New Order Received - {{ $json.customerName }}",
+        "message": "=Customer: {{ $json.customerName }} Order ID: {{ $json.orderID }} Product: {{ $json.product }} Location: {{ $json.location }} Status: Pending",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        -224
+      ],
+      "id": "038c14da-2eee-4e60-83cd-da5a3d8ddb7a",
+      "name": "Send a message",
+      "webhookId": "169977c0-2e86-46d3-a278-a34aa9bc2c67",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UDN9AhzK2U9kM14I",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "www.kashaf769pervaiz@gmail.com",
+        "subject": "=New Order Received - {{ $json.customerName }}",
+        "message": "=Customer: {{ $json.customerName }} Order ID: {{ $json.orderID }} Product: {{ $json.product }} Location: {{ $json.location }} Status: Pending",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        112
+      ],
+      "id": "10b02540-8597-4b39-85d1-fafc4660faa4",
+      "name": "Send a message1",
+      "webhookId": "169977c0-2e86-46d3-a278-a34aa9bc2c67",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UDN9AhzK2U9kM14I",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0",
+          "mode": "list",
+          "cachedResultName": "orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "customerID",
+              "lookupValue": "={{ $json.customerID }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1408,
+        -224
+      ],
+      "id": "688cfc1f-e690-499c-a589-3115b97d910f",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0",
+          "mode": "list",
+          "cachedResultName": "orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "customerID",
+              "lookupValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1456,
+        112
+      ],
+      "id": "5196f6b0-b39a-41ca-b878-66a3de294449",
+      "name": "Get row(s) in sheet2",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://wasenderapi.com/api/send-message",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer 431707f8bfba81d5f42c72099d4ff0c88a811753359e7e571c49d3ad3f6dfa15"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "to",
+              "value": "+92 3364384024"
+            },
+            {
+              "name": "text",
+              "value": "={{ $('returning customer').item.json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1664,
+        112
+      ],
+      "id": "1854e0a4-e1e4-40b7-8721-b92faf6d6bc3",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": " https://wasenderapi.com/api/send-message",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization ",
+              "value": "Bearer ceece5d2e962598c5b2aa620f09dc7a8d36d48502545c4f8e5bf48150c46b039"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "to",
+              "value": "={{ $('Edit Fields').first().json.customerID }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $('NEW_CUSTOMER').first().json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1632,
+        -224
+      ],
+      "id": "3389e9bf-7916-4a80-9951-8e6fae61822b",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -400,
+        752
+      ],
+      "id": "18a518fc-e2d4-417d-bb91-498c6ea89baf",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0",
+          "mode": "list",
+          "cachedResultName": "orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PSjuYZKzClrb2N0WlNR7boZxgQhNBBUvs0cZJM2uCF0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -176,
+        752
+      ],
+      "id": "301d0800-c917-4245-97d8-7d89770e9f9d",
+      "name": "Read Order sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b0d21bfd-5124-4652-9984-1cdcf7ededcd",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "Delivered",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        48,
+        752
+      ],
+      "id": "5133f21d-642f-4769-8955-546d68f7c04f",
+      "name": "Filter Pending Deliveries"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0a278353-4b2f-44f3-9806-d40d54127533",
+              "leftValue": "={{ $items().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        256,
+        752
+      ],
+      "id": "bb2cdfe0-651d-4162-b7f4-11e7c79e1273",
+      "name": "Any Pending deliveries"
+    },
+    {
+      "parameters": {
+        "jsCode": "const pending = items.map(i => i.json);\n\n// Count by status\nconst statusCounts = {};\npending.forEach(o => {\n  statusCounts[o.status] = (statusCounts[o.status] || 0) + 1;\n});\nconst statusSummary = Object.entries(statusCounts)\n  .map(([status, count]) => `${status}: ${count}`)\n  .join('\\n');\n\n// Show a few examples (adjust the 5 if you want more/fewer)\nconst sample = pending.slice(0, 5).map(o => \n  `- Order #${o.orderID} - ${o.customerName} - ${o.status}`\n).join('\\n');\n\nreturn [{\n  json: {\n    report_text: `📦 Daily Delivery Report\\n\\nTotal pending: ${pending.length}\\n${statusSummary}\\n\\nSample:\\n${sample}`,\n    owner_phone: \"+923354065842\"\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        528,
+        528
+      ],
+      "id": "140f0607-aef0-454e-b2bf-cd0c547699ec",
+      "name": "Build OWNER deivery Report"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return {\n  json: {\n    customer_phone: \"+92\" + $json.customerID.toString().replace(/^0/, ''),\n    notification_text: `Hi ${$json.customerName}, your order #${$json.orderID} is currently \"${$json.status}\". We'll notify you as it progresses.`,\n    orderID: $json.orderID\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        528,
+        736
+      ],
+      "id": "5bedaf84-9fc4-4fab-b29f-3ed69679eee3",
+      "name": "CUSTOMER NOTIFICATION"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://wasenderapi.com/api/send-message",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 12a861c89f84bc83724a9b177c0c5bef2e14b42e8f72f88bdaf285a20a1a92a1"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "to",
+              "value": "+92 335 4065842"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.notification_text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        864,
+        736
+      ],
+      "id": "e9f3e8a0-f5bf-4b64-b0cd-15a65e926bf0",
+      "name": "Send Customer WhatsApp Update"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        704,
+        736
+      ],
+      "id": "f8dbfaed-759f-4fd4-ab4b-99a21913c431",
+      "name": "Limit"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        480,
+        976
+      ],
+      "id": "28118514-95db-4c03-b1da-f57aa2320459",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "content": "## DELIVERY TRACKING AGENT\n",
+        "height": 704,
+        "width": 1536,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -464,
+        448
+      ],
+      "typeVersion": 1,
+      "id": "028cf6dd-e2f1-4b6e-a99a-64f4c547ebec",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://wasenderapi.com/api/send-message",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 12a861c89f84bc83724a9b177c0c5bef2e14b42e8f72f88bdaf285a20a1a92a1"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "to",
+              "value": "+92 335 4065842"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.report_text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        736,
+        528
+      ],
+      "id": "715cd9d2-875d-4f16-a2fc-af072e23ec18",
+      "name": "send mESSAGE TO OWNER"
+    },
+    {
+      "parameters": {
+        "content": "## Order Intake AGENT\n",
+        "height": 704,
+        "width": 2464,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -448,
+        -256
+      ],
+      "typeVersion": 1,
+      "id": "cdac2fea-d4bd-456c-9dd6-73119b47a555",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## COMPLAIN AGENT\n\n",
+        "height": 704,
+        "width": 944,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1072,
+        448
+      ],
+      "typeVersion": 1,
+      "id": "60938ff2-099f-4aee-840e-e354b3a62dac",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "93a2a031-fe3a-4aa5-9834-be97e9939582",
+              "name": "complaintID",
+              "value": "=COMP-{{ Date.now() }}",
+              "type": "string"
+            },
+            {
+              "id": "06541e2a-34ca-4d25-a1e1-540738858e3e",
+              "name": "customerID",
+              "value": "={{ $json.customerID }}",
+              "type": "string"
+            },
+            {
+              "id": "12052fd4-34d4-4a95-b90b-40cce981e6b0",
+              "name": "customerName",
+              "value": "={{ $json.customerName }}",
+              "type": "string"
+            },
+            {
+              "id": "72a63fe1-118c-4ab8-a33b-5ab6b5744663",
+              "name": "phone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "fdc5131a-2b28-4e7b-b921-f32ac6ad97f1",
+              "name": "complaintDate",
+              "value": "={{ Date.now() }}",
+              "type": "string"
+            },
+            {
+              "id": "4760bc4b-e91d-4ff4-8169-e9f351dfe1ba",
+              "name": "issue",
+              "value": "={{ $json.message }}",
+              "type": "string"
+            },
+            {
+              "id": "783e5ff7-d77b-413e-9b5f-ad39f4deebfd",
+              "name": "status",
+              "value": "Pending",
+              "type": "string"
+            },
+            {
+              "id": "99cdef9d-2a4e-4a0c-9890-2a89a74f0f1b",
+              "name": "resolution",
+              "value": "Being Reviewed",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1248,
+        720
+      ],
+      "id": "8ec417e6-9ca7-4860-8fcc-6f6a27470a29",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a Complaint Resolution Agent for Fankaar.khana restaurant.\n\nYour role:\n1. Acknowledge the customer's complaint with empathy\n2. Apologize for the issue\n3. Ask for any additional details if needed\n4. Suggest how you will resolve it\n5. Give an estimated timeline for resolution (24-48 hours)\n6. Assure them their complaint is being taken seriously\n7. Provide a complaint reference number format: COMP-[ID]\n\nAlways be:\n- Professional and polite\n- Solution-focused\n- Empathetic and understanding\n- Quick to respond\n\nCustomer Complaint: {{ $json.issue }}\nCustomer Name: {{ $json.customerName }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1392,
+        720
+      ],
+      "id": "2af24a56-7028-41da-9703-3204c39fee5b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        944
+      ],
+      "id": "1e94add5-ad1b-4f8e-bee1-e81585ed8f62",
+      "name": "Groq Chat Model2",
+      "credentials": {
+        "groqApi": {
+          "id": "sDrlQUxzL5qElLud",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1dfWz8_BiCZ_1maPnlb2ipUK6K9gdolwhyb4r115_ze4",
+          "mode": "list",
+          "cachedResultName": "Complaints",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dfWz8_BiCZ_1maPnlb2ipUK6K9gdolwhyb4r115_ze4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dfWz8_BiCZ_1maPnlb2ipUK6K9gdolwhyb4r115_ze4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            " complaintID": "={{ $('Edit Fields').json.complaintID }}",
+            " customerID": "={{ $('Edit Fields').json.customerID }}",
+            "phone": "={{ $('Edit Fields').json.phone }}",
+            " customerName": "={{ $('Edit Fields').json.customerName }}",
+            "complaintDate": "={{ $('Edit Fields').json.complaintDate }}",
+            "issue": "={{ $('Edit Fields').json.issue }}",
+            " status": "={{ $('Edit Fields').json.status }}",
+            " resolution": "={{ $('Groq Chat Model').json.output }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": " complaintID",
+              "displayName": " complaintID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": " customerID",
+              "displayName": " customerID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": " customerName",
+              "displayName": " customerName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "complaintDate",
+              "displayName": "complaintDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue",
+              "displayName": "issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": " status",
+              "displayName": " status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": " resolution",
+              "displayName": " resolution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1712,
+        720
+      ],
+      "id": "66788244-fc9d-43d4-a4b4-a47e768210df",
+      "name": "Append row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "complaint-intake",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        1088,
+        720
+      ],
+      "id": "e892c159-e0d6-4380-ae74-b877b103b9c7",
+      "name": "Webhook1",
+      "webhookId": "e56c2045-de19-4b6c-be96-454521602fdd"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://wasenderapi.com/api/send-message",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 431707f8bfba81d5f42c72099d4ff0c88a811753359e7e571c49d3ad3f6dfa15"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "to",
+              "value": "+92 3364384024"
+            },
+            {
+              "name": "text",
+              "value": "={{ $('AI Agent').item.json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1856,
+        528
+      ],
+      "id": "7cb9299e-a23c-4633-b272-a398b62b38fe",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "sendTo": "www.kashaf769pervaiz@gmail.com",
+        "subject": "complain",
+        "message": "=NEW COMPLAINT RECEIVED ⚠️  Complaint ID: {{ $('Edit Fields1').json.complaintID }} Customer: {{ $('Edit Fields1').json.customerName }} Phone: {{ $('Edit Fields1').json.phone }} Date: {{ $('Edit Fields1').json.complaintDate }}  COMPLAINT: {{ $('Edit Fields1').json.issue }}  PRIORITY: {{ $('Edit Fields1').json.priority }}  AI RESPONSE: {{ $('AI Agent').json.output }}  STATUS: Pending Investigation  Please review and take action!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1840,
+        960
+      ],
+      "id": "9c2e1eec-40d5-4a5e-ba37-575df56f465f",
+      "name": "Send a message2",
+      "webhookId": "9f46f7a6-4292-49fa-9cf7-bfc1cf17ac1c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UDN9AhzK2U9kM14I",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Chatbot AND VOICE AGENT \n\n\n",
+        "height": 1408,
+        "width": 852,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2016,
+        -256
+      ],
+      "typeVersion": 1,
+      "id": "809c5f33-ad1f-4d94-b5e2-fc8984330b75",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "6a560eba-e1ff-4198-8970-0b48db35ea01",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        2064,
+        -32
+      ],
+      "id": "ddb51155-5568-45ea-baf7-f3fd09c1c16c",
+      "name": "Webhook2",
+      "webhookId": "6a560eba-e1ff-4198-8970-0b48db35ea01"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.chatInput }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainRetrievalQa",
+      "typeVersion": 1.7,
+      "position": [
+        2304,
+        -32
+      ],
+      "id": "e8996e7a-279c-4c67-93fb-d8260b546769",
+      "name": "Question and Answer Chain"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        2144,
+        176
+      ],
+      "id": "bdd873c3-b3de-441a-b845-56e068eeb83c",
+      "name": "Groq Chat Model3",
+      "credentials": {
+        "groqApi": {
+          "id": "sDrlQUxzL5qElLud",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.retrieverVectorStore",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        144
+      ],
+      "id": "59882c50-5dd2-46f0-82cc-f7359232cdde",
+      "name": "Vector Store Retriever"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2672,
+        -32
+      ],
+      "id": "d78bef76-68e4-471d-b345-f26ef0da9c54",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "fankaarkhaana",
+          "mode": "list",
+          "cachedResultName": "fankaarkhaana"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        2320,
+        320
+      ],
+      "id": "fad3c296-aebf-405a-96e2-c29035adb777",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "IXZpUW5GoNmA8s4k",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "BAAI/bge-large-en-v1.5",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        2448,
+        480
+      ],
+      "id": "e7895100-070b-453b-ab6e-7d47994419a9",
+      "name": "Embeddings HuggingFace Inference",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "Hj9R1fos2arsgAvF",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        2032,
+        752
+      ],
+      "id": "e87f728b-c2e2-4418-91d0-eb907a7075e0",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "fankaarkhaana",
+          "mode": "list",
+          "cachedResultName": "fankaarkhaana"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        2416,
+        752
+      ],
+      "id": "534b81ce-0fd8-476e-8335-830371609a56",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "IXZpUW5GoNmA8s4k",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "BAAI/bge-large-en-v1.5",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        2544,
+        960
+      ],
+      "id": "e4c5392b-3cc8-4621-a0b9-c1896b7778ee",
+      "name": "Embeddings HuggingFace Inference1",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "Hj9R1fos2arsgAvF",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        2720,
+        944
+      ],
+      "id": "2231287b-295d-4e93-83d5-5dfef0991380",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "content": "## Fankaar — Admin Inventory Agent andLaunch Bot",
+        "height": 464,
+        "width": 832
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2864,
+        -256
+      ],
+      "typeVersion": 1,
+      "id": "d3e5d99a-1bbc-4eb4-a292-05c3b47a836a",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are the inventory management assistant for Fankaar.Khana, a handcrafted decor business. You help the shop owner manage their product inventory stored in Google Sheets.\n\nYou can:\n- Add new products\n- Update existing product prices, descriptions, or stock counts\n- Remove products\n- Look up product details or current stock\n\nGeneral rules:\n- Always confirm what action you took after doing it (e.g. \"Added 'Peacock Set' at Rs 5000 with stock 10\").\n- If a request is ambiguous (e.g. which product to update when there are similar names), ask a clarifying question before acting.\n\nWhen updating a product:\n- Only include fields the user actually wants changed.\n- For any field not mentioned, first look up the product's current value and reuse it unchanged, so you don't accidentally overwrite it with a blank value.\n\nWhen deleting a product:\n- Always call the inventory lookup tool first to find its exact row_number, then use that row_number with the delete tool. Never guess a row number.\n- Confirm the product name and price with the user before deleting, since this action cannot be undone.After successfully adding a new product, always draft a short \"just launched\" Instagram/Facebook caption for it in the same response. The caption should:\n- Be 2-4 sentences, warm and excited in tone\n- Mention the product name and price\n- Mention that it's customizable in any color\n- Include 3-5 relevant hashtags (e.g. #HandmadeDecor #FankaarKhana #HomeDecor)\n- Be clearly separated from the confirmation message, under a line like \"📱 Caption for your post:\"\n\nDo not draft a caption for updates or deletions — only for newly added products."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        3264,
+        -160
+      ],
+      "id": "1f66a2b4-7328-4541-913d-b4be8003ba9f",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        2960,
+        32
+      ],
+      "id": "f2578c9b-a157-42de-b6f5-741db6f93978",
+      "name": "Groq Chat Model4",
+      "credentials": {
+        "groqApi": {
+          "id": "sDrlQUxzL5qElLud",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        2960,
+        -160
+      ],
+      "id": "3c93446f-4b6f-406f-b347-d87ecdffc1d6",
+      "name": "When chat message received",
+      "webhookId": "0b9602d9-e41d-4850-8d19-f2857170be57"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this to look up current inventory information — check a specific product's price, stock, or description, or view the entire inventory list. Use this whenever the user asks \"how much stock,\" \"what's the price of,\" \"show me the inventory,\" or similar questions.",
+        "documentId": {
+          "__rl": true,
+          "value": "1MlEP-ypVSPnnpkbtqya0_tNseZ-1J3-hnGqbFy0yb90",
+          "mode": "list",
+          "cachedResultName": "fankaar khana inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MlEP-ypVSPnnpkbtqya0_tNseZ-1J3-hnGqbFy0yb90/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MlEP-ypVSPnnpkbtqya0_tNseZ-1J3-hnGqbFy0yb90/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        3264,
+        48
+      ],
+      "id": "1926554e-9612-4c1d-8b36-70e366c98901",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this to add a brand new product to the inventory. Call this only when the user wants to create a product that doesn't already exist.",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1MlEP-ypVSPnnpkbtqya0_tNseZ-1J3-hnGqbFy0yb90",
+          "mode": "list",
+          "cachedResultName": "fankaar khana inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MlEP-ypVSPnnpkbtqya0_tNseZ-1J3-hnGqbFy0yb90/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MlEP-ypVSPnnpkbtqya0_tNseZ-1J3-hnGqbFy0yb90/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product": "={{ $fromAI(\"product_name\") }} ",
+            " Price": "= {{ $fromAI(\"price\") }}",
+            "Description": "={{ $fromAI(\"description\") }}",
+            "Stock": "={{ $fromAI(\"stock\") }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": " Price",
+              "displayName": " Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Stock",
+              "displayName": "Stock",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        3136,
+        64
+      ],
+      "id": "8a74fd39-3614-4356-a42d-c0c26d4dae66",
+      "name": "ADD Product",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this to update an existing product's price, description, or stock count. Requires the exact product name to find the right row, plus whichever fields are being changed.",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1MlEP-ypVSPnnpkbtqya0_tNseZ-1J3-hnGqbFy0yb90",
+          "mode": "list",
+          "cachedResultName": "fankaar khana inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MlEP-ypVSPnnpkbtqya0_tNseZ-1J3-hnGqbFy0yb90/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MlEP-ypVSPnnpkbtqya0_tNseZ-1J3-hnGqbFy0yb90/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product": "={{ $fromAI(\"product_name\") }}",
+            " Price": "={{ $fromAI(\"price\") }}",
+            "Description": "={{ $fromAI(\"description\") }}",
+            "Stock": "={{ $fromAI(\"stock\") }}"
+          },
+          "matchingColumns": [
+            "Product"
+          ],
+          "schema": [
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": " Price",
+              "displayName": " Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Stock",
+              "displayName": "Stock",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        3408,
+        48
+      ],
+      "id": "1c676853-3976-4725-91b4-bf79191289e9",
+      "name": "Update Product",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Use this to permanently remove a product from the inventory. You must first call the \"Get row(s) in sheet\" tool to find the product's row_number, then pass that exact row_number here. Never guess a row number.",
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1MlEP-ypVSPnnpkbtqya0_tNseZ-1J3-hnGqbFy0yb90",
+          "mode": "list",
+          "cachedResultName": "fankaar khana inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MlEP-ypVSPnnpkbtqya0_tNseZ-1J3-hnGqbFy0yb90/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MlEP-ypVSPnnpkbtqya0_tNseZ-1J3-hnGqbFy0yb90/edit#gid=0"
+        },
+        "startIndex": "={{ $fromAI(\"row_number\") }}"
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        3536,
+        48
+      ],
+      "id": "6021c3e3-f5d3-4451-8388-90da36993e47",
+      "name": "Delete product",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1LdRUbgDZ1TBhk7pC1WmddO43bCDQNFi0",
+          "mode": "list",
+          "cachedResultName": "please help.md",
+          "cachedResultUrl": "https://drive.google.com/file/d/1LdRUbgDZ1TBhk7pC1WmddO43bCDQNFi0/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2224,
+        752
+      ],
+      "id": "08c5a3c1-55d3-4f56-9e73-b57b08b62885",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "0mvAUei2vz21Nsto",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "##  Competitor Data Analysis agent",
+        "height": 688,
+        "width": 852,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2864,
+        208
+      ],
+      "typeVersion": 1,
+      "id": "7f9f7499-fdb5-482f-a53b-2fcd0d6388ed",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        2880,
+        304
+      ],
+      "id": "f4d4f000-0eae-401b-bc69-3557820b4316",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "131chOMrLo9A1RGZDvteqVl1pTQB0J24b5pmco4r9bCU",
+          "mode": "list",
+          "cachedResultName": "Track List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/131chOMrLo9A1RGZDvteqVl1pTQB0J24b5pmco4r9bCU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/131chOMrLo9A1RGZDvteqVl1pTQB0J24b5pmco4r9bCU/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3088,
+        304
+      ],
+      "id": "93e094e1-7be1-4f1f-93bd-267300c5d95d",
+      "name": "Get row(s) in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://google.serper.dev/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-API-KEY",
+              "value": "564e95d38df7f3d308e04b8f87c3c9d8271cbf0a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"q\": \"{{ $json.Keyword }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3248,
+        304
+      ],
+      "id": "4b40ee31-e9f9-4c84-b892-33a4c0fb598e",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Search results for the keyword \"{{ $('Get row(s) in sheet3').item.json.Keyword }}\":\n{{ $json.organic }}\n\nFrom these results, extract:\n1. A short trend/insight (one sentence)\n2. Typical price or price range mentioned, if any\n3. The most relevant competitor name and link\n\nReply in this exact format, no extra text:\nInsight: <text>\nPrice: <text>\nSource: <name> - <link>\n",
+        "options": {
+          "systemMessage": "You are a market research assistant for a handmade home decor business in Pakistan. You analyze search results and extract clear, short competitor insights. Always reply in the exact format requested, with no extra commentary."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        3424,
+        304
+      ],
+      "id": "0cb32471-2432-4083-a9dd-1c1c1d29946d",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        3392,
+        496
+      ],
+      "id": "d74f08b0-7bcc-4178-9fb4-d1cff07b7649",
+      "name": "Groq Chat Model5",
+      "credentials": {
+        "groqApi": {
+          "id": "sDrlQUxzL5qElLud",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "131chOMrLo9A1RGZDvteqVl1pTQB0J24b5pmco4r9bCU",
+          "mode": "list",
+          "cachedResultName": "Track List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/131chOMrLo9A1RGZDvteqVl1pTQB0J24b5pmco4r9bCU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1114566004,
+          "mode": "list",
+          "cachedResultName": "Competitor Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/131chOMrLo9A1RGZDvteqVl1pTQB0J24b5pmco4r9bCU/edit#gid=1114566004"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $today }}",
+            "Keyword": "={{ $('Get row(s) in sheet3').item.json.Keyword }}",
+            "Insight": "={{ $json.Insight }}",
+            "Price": "={{ $json.Price }}",
+            "Source": "={{ $json.Source }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Insight",
+              "displayName": "Insight",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3104,
+        608
+      ],
+      "id": "3c8ce62c-0818-4a3e-b80e-dbc04fa00783",
+      "name": "Append row in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1410011e-0667-4dd9-b2f4-4e45c06e7bb4",
+              "name": "Insight",
+              "value": "= {{ $json.output.split('\\n')[0].replace('Insight:', '').trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "28d05eb2-1275-4976-bfbc-9372dd8e5a1d",
+              "name": "Price",
+              "value": "={{ $json.output.split('\\n')[1].replace('Price:', '').trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "e82586b6-04a3-4ff5-9b23-4370844c8551",
+              "name": "=Source",
+              "value": "= {{ $json.output.split('\\n')[2].replace('Source:', '').trim() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2912,
+        608
+      ],
+      "id": "920a968f-2be9-4c3a-aaa2-06d038c7737e",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "sendTo": "www.kashaf769pervaiz@gmail.com",
+        "subject": "Competitor  data  report",
+        "message": "={{ $json.emailHtml }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        3488,
+        608
+      ],
+      "id": "f1a28f89-5141-4440-96a5-f0bec23fa98d",
+      "name": "Send a message3",
+      "webhookId": "68b946cb-0870-4928-86e4-f87c73900df1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UDN9AhzK2U9kM14I",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Paste into a Code node (mode: \"Run Once for All Items\")\n// placed after Loop Over Items' \"done\" output -> Google Sheets \"Get row(s)\" (full sheet4)\n\nconst rows = $input.all().map(item => item.json);\n\nfunction hasPrice(price) {\n  if (!price) return false;\n  const p = String(price).toLowerCase();\n  return !(p.includes('no specific') || p.includes('not price') || p.trim() === '');\n}\n\nconst total = rows.length;\nconst priced = rows.filter(r => hasPrice(r.Price));\nconst unpriced = total - priced.length;\nconst sources = [...new Set(rows.map(r => (r.Source || '').split(' - ')[0].trim()))];\n\n// Simple auto-generated analysis (swap this block for an AI Agent node later if you want smarter copy)\nconst analysisPoints = [];\nanalysisPoints.push(`${priced.length} of ${total} tracked keywords returned real pricing; ${unpriced} did not, meaning most of this market isn't quoting prices upfront.`);\nif (priced.length) {\n  const widest = priced.reduce((a, b) => (String(b.Price).length > String(a.Price).length ? b : a));\n  analysisPoints.push(`${widest.Keyword} showed the widest price spread (${widest.Price}), suggesting room for both budget and premium positioning.`);\n}\nanalysisPoints.push(`Signals are spread across ${sources.length} distinct sources (${sources.slice(0,4).join(', ')}${sources.length>4?', +more':''}), pointing to a fragmented market rather than one dominant seller.`);\n\nconst rowsHtml = rows.map(r => `\n  <tr>\n    <td style=\"padding:10px 12px; border-bottom:1px solid #eee; font-size:13px;\">${r.Keyword}</td>\n    <td style=\"padding:10px 12px; border-bottom:1px solid #eee; font-size:13px; color:${hasPrice(r.Price) ? '#5C6E4F' : '#B4502B'}; font-weight:600; white-space:nowrap;\">${r.Price}</td>\n    <td style=\"padding:10px 12px; border-bottom:1px solid #eee; font-size:13px;\">${(r.Source || '').split(' - ')[0]}</td>\n  </tr>`).join('');\n\nconst html = `\n<div style=\"font-family: Arial, sans-serif; max-width:640px; margin:0 auto; color:#241F1A;\">\n  <p style=\"font-size:11px; letter-spacing:1px; text-transform:uppercase; color:#B4502B; margin:0 0 6px;\">Competitor Intelligence &middot; Handmade Decor</p>\n  <h1 style=\"font-size:24px; margin:0 0 20px;\">Daily market scan &mdash; ${total} keywords</h1>\n\n  <div style=\"background:#F6F1E7; border-radius:6px; padding:18px 20px; margin-bottom:24px;\">\n    <p style=\"margin:0 0 10px; font-size:14px; font-weight:bold;\">What this run found:</p>\n    <ul style=\"margin:0; padding-left:18px; font-size:13.5px; line-height:1.6;\">\n      ${analysisPoints.map(p => `<li style=\"margin-bottom:6px;\">${p}</li>`).join('')}\n    </ul>\n  </div>\n\n  <table style=\"width:100%; border-collapse:collapse; margin-bottom:20px;\">\n    <thead>\n      <tr>\n        <th style=\"text-align:left; padding:8px 12px; font-size:11px; text-transform:uppercase; color:#888; border-bottom:2px solid #241F1A;\">Keyword</th>\n        <th style=\"text-align:left; padding:8px 12px; font-size:11px; text-transform:uppercase; color:#888; border-bottom:2px solid #241F1A;\">Price</th>\n        <th style=\"text-align:left; padding:8px 12px; font-size:11px; text-transform:uppercase; color:#888; border-bottom:2px solid #241F1A;\">Source</th>\n      </tr>\n    </thead>\n    <tbody>${rowsHtml}</tbody>\n  </table>\n\n  <p style=\"font-size:12px; color:#888;\">Full interactive dashboard: <a href=\"http://localhost:5678/webhook/e6f238e7-5164-4f0c-8f7b-21dd16565d6c\" style=\"color:#B4502B;\">view live</a></p>\n</div>`;\n\nreturn [{ json: { emailHtml: html } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3280,
+        608
+      ],
+      "id": "7dd8f0b4-ab0c-4e75-9088-c7f923cc4897",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "path": "8eab22c7-86e6-4b52-ae9a-06cf8e80bdb9",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        2880,
+        912
+      ],
+      "id": "335d6bf6-0bfa-43f4-89bd-124492c5ef3a",
+      "name": "Webhook3",
+      "webhookId": "8eab22c7-86e6-4b52-ae9a-06cf8e80bdb9"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "131chOMrLo9A1RGZDvteqVl1pTQB0J24b5pmco4r9bCU",
+          "mode": "list",
+          "cachedResultName": "Track List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/131chOMrLo9A1RGZDvteqVl1pTQB0J24b5pmco4r9bCU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1114566004,
+          "mode": "list",
+          "cachedResultName": "Competitor Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/131chOMrLo9A1RGZDvteqVl1pTQB0J24b5pmco4r9bCU/edit#gid=1114566004"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3056,
+        912
+      ],
+      "id": "7909659c-b7ab-4bb5-b3aa-8997b54bf15f",
+      "name": "Get row(s) in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8pIB19NSpaC8Yp5l",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Paste this into your dashboard's Code node (mode: \"Run Once for All Items\")\n// placed after Webhook3 -> Get row(s) in sheet4 -> [this Code node] -> Respond to Webhook\n\nconst rows = $input.all().map(item => item.json);\n\nfunction parsePriceNums(str) {\n  if (!str) return [];\n  const isUSD = /\\$/.test(str);\n  const nums = (String(str).replace(/,/g, '').match(/\\d+(\\.\\d+)?/g) || []).map(Number);\n  return isUSD ? nums.map(n => n * 280) : nums; // rough USD->PKR so all prices bucket consistently\n}\nfunction priceBucket(str) {\n  const nums = parsePriceNums(str);\n  if (!nums.length) return 'No price';\n  const maxN = Math.max(...nums);\n  if (maxN < 5000) return 'Budget';\n  if (maxN <= 20000) return 'Mid-range';\n  return 'Premium';\n}\nfunction sourceName(src) { return (src || '').split(' - ')[0].trim(); }\nfunction sourceUrl(src) { return (src || '').split(' - ')[1] || '#'; }\nfunction sourceType(name) {\n  const n = (name || '').toLowerCase();\n  if (n.includes('etsy') || n.includes('daraz')) return 'Marketplace';\n  if (n.includes('instagram') || n.includes('woven')) return 'Social';\n  if (n.includes('gul ahmed')) return 'Brand site';\n  if (n.includes('khoob')) return 'Local retailer';\n  if (n.includes('architectural digest')) return 'Editorial';\n  return 'Other';\n}\n\nconst items = rows.map(r => ({\n  kw: r.Keyword,\n  insight: r.Insight,\n  price: r.Price,\n  bucket: priceBucket(r.Price),\n  sourceName: sourceName(r.Source),\n  sourceUrl: sourceUrl(r.Source),\n  date: r.Date\n}));\n\nconst total = items.length;\nconst withPrice = items.filter(i => i.bucket !== 'No price').length;\nconst sourceCount = new Set(items.map(i => i.sourceName)).size;\nconst lastDate = rows.length ? new Date(rows[rows.length - 1].Date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '';\n\nconst cardsHtml = items.map((d, i) => {\n  const tierClass = 'tier-' + d.bucket.toLowerCase().replace(' ', '-');\n  return `\n    <div class=\"card\" data-price=\"${d.bucket}\" style=\"animation-delay:${0.05 * i}s\">\n      <span class=\"idx\">0${i + 1}</span>\n      <div class=\"kw\">${d.kw}</div>\n      <div class=\"insight\">${d.insight}</div>\n      <div class=\"price-row\">\n        <span class=\"price-label\">Price signal &middot; ${d.bucket}</span>\n        <span class=\"price-tag ${tierClass}\"><span class=\"dot\"></span>${d.price}</span>\n        <a class=\"source\" href=\"${d.sourceUrl}\" target=\"_blank\" rel=\"noopener\">${d.sourceName}<span class=\"arrow\">↗</span></a>\n      </div>\n    </div>`;\n}).join('');\n\nconst tierOrder = ['Budget', 'Mid-range', 'Premium', 'No price'];\nconst tierColorMap = { 'Budget': '#5C6E4F', 'Mid-range': '#B08A2E', 'Premium': '#B4502B', 'No price': '#8B5E6B' };\nconst tierCounts = {};\nitems.forEach(d => { tierCounts[d.bucket] = (tierCounts[d.bucket] || 0) + 1; });\nconst tierLabels = tierOrder.filter(t => tierCounts[t]);\nconst tierValues = tierLabels.map(t => tierCounts[t]);\nconst tierColors = tierLabels.map(t => tierColorMap[t]);\n\nconst typeCounts = {};\nitems.forEach(d => { const t = sourceType(d.sourceName); typeCounts[t] = (typeCounts[t] || 0) + 1; });\nconst typeLabels = Object.keys(typeCounts);\nconst typeValues = Object.values(typeCounts);\nconst typePalette = ['#B4502B', '#5C6E4F', '#B08A2E', '#7A8CA3', '#8B5E6B', '#6B6155'];\nconst typeColors = typeLabels.map((_, i) => typePalette[i % typePalette.length]);\n\n// ---- price trend over time (groups by run date) ----\nconst byDate = {};\nitems.forEach(d => {\n  const nums = parsePriceNums(d.price);\n  if (!nums.length || !d.date) return;\n  const dayKey = String(d.date).slice(0, 10); // YYYY-MM-DD\n  const max = Math.max(...nums);\n  if (!byDate[dayKey]) byDate[dayKey] = [];\n  byDate[dayKey].push(max);\n});\nconst trendDateKeys = Object.keys(byDate).sort();\nconst trendLabels = trendDateKeys.map(dt => {\n  const d = new Date(dt);\n  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });\n});\nconst trendValues = trendDateKeys.map(dt => Math.round(byDate[dt].reduce((a, b) => a + b, 0) / byDate[dt].length));\n\n// ---- price range scatter (floor vs ceiling per keyword) ----\nconst scatterPoints = items.map(d => {\n  const nums = parsePriceNums(d.price);\n  if (!nums.length) return null;\n  return { x: Math.min(...nums), y: Math.max(...nums), kw: d.kw, bucket: d.bucket };\n}).filter(Boolean);\nconst scatterTierColorMap = { 'Budget':'#5C6E4F', 'Mid-range':'#B08A2E', 'Premium':'#B4502B', 'No price':'#8B5E6B' };\nconst scatterTiers = [...new Set(scatterPoints.map(p => p.bucket))];\nconst scatterDatasets = scatterTiers.map(tier => ({\n  label: tier,\n  points: scatterPoints.filter(p => p.bucket === tier).map(p => ({ x: p.x, y: p.y, kw: p.kw })),\n  color: scatterTierColorMap[tier]\n}));\n\nconst filterButtons = ['All ' + total, ...tierLabels].map((label, i) => {\n  const f = i === 0 ? 'all' : tierLabels[i - 1];\n  return `<button class=\"filt-btn ${i === 0 ? 'active' : ''}\" data-f=\"${f}\">${label}</button>`;\n}).join('');\n\nconst html = `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<title>Handmade Decor — Market Scan</title>\n<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n<link href=\"https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap\" rel=\"stylesheet\">\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js\"></script>\n<style>\n  :root{ --paper:#F6F1E7; --ink:#241F1A; --clay:#B4502B; --sage:#5C6E4F; --gold:#B08A2E; --line: rgba(36,31,26,0.14); --card: #FFFCF6; }\n  *{box-sizing:border-box; margin:0; padding:0;}\n  body{ background:var(--paper); color:var(--ink); font-family:'Inter', sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh;\n    background-image: radial-gradient(circle at 1px 1px, rgba(36,31,26,0.06) 1px, transparent 0); background-size: 22px 22px; }\n  .wrap{max-width:1120px; margin:0 auto; padding:56px 28px 90px;}\n  header{ display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1.5px solid var(--ink); padding-bottom:26px; margin-bottom:8px; }\n  .eyebrow{ font-family:'Space Mono', monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--clay); margin-bottom:14px; display:flex; align-items:center; gap:10px; }\n  .eyebrow::before{content:\"●\"; font-size:8px; color:var(--sage);}\n  h1{ font-family:'Fraunces', serif; font-weight:600; font-size:clamp(34px, 5vw, 54px); line-height:1.02; letter-spacing:-0.01em; }\n  h1 em{font-style:italic; font-weight:400; color:var(--clay);}\n  .meta-block{text-align:right; font-family:'Space Mono', monospace; font-size:12px; color:rgba(36,31,26,.6); line-height:1.7;}\n  .meta-block b{color:var(--ink); font-weight:700;}\n  .stats{ display:grid; grid-template-columns:repeat(4,1fr); border-bottom:1.5px solid var(--ink); margin-bottom:46px; }\n  .stat{ padding:22px 20px; border-right:1px solid var(--line); }\n  .stat:last-child{border-right:none;}\n  .stat .n{font-family:'Fraunces', serif; font-size:32px; font-weight:600;}\n  .stat .l{font-size:12px; color:rgba(36,31,26,.6); margin-top:4px;}\n  .intro{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:24px; flex-wrap:wrap; gap:16px; }\n  .intro p{max-width:520px; font-size:14.5px; line-height:1.6; color:rgba(36,31,26,.75);}\n  .filters{display:flex; gap:8px; flex-wrap:wrap;}\n  .filt-btn{ font-family:'Space Mono', monospace; font-size:11.5px; letter-spacing:.02em; padding:9px 15px; border:1px solid var(--ink); background:transparent; color:var(--ink); cursor:pointer; border-radius:100px; transition:.2s; }\n  .filt-btn:hover, .filt-btn.active{background:var(--ink); color:var(--paper);}\n  .thread{height:14px; margin:0 0 30px; overflow:hidden;}\n  .thread svg{width:100%; height:100%; display:block;}\n  .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:18px; }\n  .card{ background:var(--card); border:1px solid var(--line); border-radius:2px; padding:22px 22px 20px; position:relative;\n    opacity:0; transform:translateY(14px); animation: rise .6s ease forwards; transition: box-shadow .25s ease, transform .25s ease, border-color .25s; display:flex; flex-direction:column; gap:14px; }\n  .card:hover{ box-shadow: 0 14px 28px rgba(36,31,26,0.10); transform: translateY(-3px); border-color: var(--ink); }\n  .card .idx{ position:absolute; top:16px; right:20px; font-family:'Space Mono', monospace; font-size:11px; color:rgba(36,31,26,.35); }\n  .kw{ font-family:'Fraunces', serif; font-weight:600; font-size:19px; line-height:1.28; padding-right:32px; }\n  .insight{font-size:13.5px; line-height:1.6; color:rgba(36,31,26,.78);}\n  .price-row{ margin-top:auto; padding-top:14px; border-top:1px dashed var(--line); display:flex; flex-direction:column; gap:8px; }\n  .price-label{ font-family:'Space Mono', monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:rgba(36,31,26,.45); }\n  .price-tag{ display:inline-flex; align-self:flex-start; align-items:center; gap:7px; font-family:'Space Mono', monospace; font-size:13px; font-weight:700; padding:6px 12px; border-radius:100px; }\n  .price-tag.tier-budget{background:rgba(92,110,79,0.14); color:var(--sage); border:1px solid rgba(92,110,79,.35);}\n  .price-tag.tier-mid-range{background:rgba(176,138,46,0.14); color:var(--gold); border:1px solid rgba(176,138,46,.35);}\n  .price-tag.tier-premium{background:rgba(180,80,43,0.10); color:var(--clay); border:1px solid rgba(180,80,43,.28);}\n  .price-tag.tier-no-price{background:rgba(139,94,107,0.10); color:#8B5E6B; border:1px solid rgba(139,94,107,.3);}\n  .price-tag .dot{width:6px; height:6px; border-radius:50%; background:currentColor;}\n  .source{ display:flex; align-items:center; gap:6px; font-size:12px; color:rgba(36,31,26,.65); text-decoration:none; border-bottom:1px solid transparent; }\n  .source:hover{color:var(--clay); border-bottom-color:var(--clay);}\n  .source .arrow{font-size:12px; transition:transform .2s;}\n  .source:hover .arrow{transform:translate(2px,-2px);}\n  .card.hidden{display:none;}\n  .charts-section{margin:46px 0 50px;}\n  .charts-heading{display:flex; align-items:baseline; gap:12px; margin-bottom:20px;}\n  .charts-heading h2{font-family:'Fraunces', serif; font-weight:600; font-size:22px;}\n  .charts-heading span{font-family:'Space Mono', monospace; font-size:11px; color:rgba(36,31,26,.5);}\n  .charts-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px;}\n  .chart-card{background:var(--card); border:1px solid var(--line); border-radius:2px; padding:24px 24px 18px;}\n  .chart-card h3{font-family:'Space Mono', monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:rgba(36,31,26,.55); margin-bottom:4px;}\n  .chart-card p.sub{font-size:12.5px; color:rgba(36,31,26,.55); margin-bottom:16px;}\n  .chart-wrap{position:relative; height:230px; display:flex; align-items:center; justify-content:center;}\n  .chart-legend{display:flex; flex-wrap:wrap; gap:10px 18px; margin-top:16px; justify-content:center;}\n  .chart-legend .item{display:flex; align-items:center; gap:7px; font-size:12px; color:rgba(36,31,26,.75);}\n  .chart-legend .sw{width:9px; height:9px; border-radius:2px; flex-shrink:0;}\n  @media (max-width:760px){.charts-grid{grid-template-columns:1fr;}}\n  footer{ margin-top:60px; padding-top:20px; border-top:1px solid var(--line); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-family:'Space Mono', monospace; font-size:11px; color:rgba(36,31,26,.5); }\n  @keyframes rise{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }\n  @media (max-width:640px){ header{flex-direction:column; align-items:flex-start; gap:16px;} .meta-block{text-align:left;} .stats{grid-template-columns:repeat(2,1fr);} .stat:nth-child(2){border-right:none;} }\n  :focus-visible{ outline:2px solid var(--clay); outline-offset:2px; }\n  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }\n</style>\n</head>\n<body>\n<div class=\"wrap\">\n  <header>\n    <div>\n      <div class=\"eyebrow\">Competitor Intelligence · Handmade Decor</div>\n      <h1>Market scan,<br><em>${total} signals</em> deep.</h1>\n    </div>\n    <div class=\"meta-block\">\n      <div>REGION <b>Pakistan</b></div>\n      <div>LAST RUN <b>${lastDate}</b></div>\n      <div>SOURCES <b>${sourceCount} tracked</b></div>\n    </div>\n  </header>\n  <div class=\"stats\">\n    <div class=\"stat\"><div class=\"n\">${total}</div><div class=\"l\">Keywords tracked</div></div>\n    <div class=\"stat\"><div class=\"n\">${sourceCount}</div><div class=\"l\">Unique sources</div></div>\n    <div class=\"stat\"><div class=\"n\">${withPrice}</div><div class=\"l\">With hard pricing</div></div>\n    <div class=\"stat\"><div class=\"n\">2026</div><div class=\"l\">Trend horizon</div></div>\n  </div>\n  <div class=\"intro\">\n    <p>Live feed from the daily scraper agent — pulled fresh from the sheet on every page load, so this always reflects this morning's run.</p>\n    <div class=\"filters\">${filterButtons}</div>\n  </div>\n  <div class=\"thread\">\n    <svg viewBox=\"0 0 1120 14\" preserveAspectRatio=\"none\">\n      <path d=\"M0,7 C 40,-2 80,16 120,7 S 200,-2 240,7 S 320,16 360,7 S 440,-2 480,7 S 560,16 600,7 S 680,-2 720,7 S 800,16 840,7 S 920,-2 960,7 S 1040,16 1080,7 S 1140,7 1120,7\" stroke=\"#B4502B\" stroke-width=\"1.4\" fill=\"none\" opacity=\"0.55\"/>\n    </svg>\n  </div>\n  <div class=\"grid\" id=\"grid\">${cardsHtml}</div>\n\n  <div class=\"charts-section\">\n    <div class=\"charts-heading\"><h2>Market breakdown</h2><span>2 views &middot; same ${total} signals</span></div>\n    <div class=\"charts-grid\">\n      <div class=\"chart-card\">\n        <h3>Price range distribution</h3>\n        <p class=\"sub\">Keywords grouped by tier — Budget (under Rs 5,000), Mid-range (Rs 5,000&ndash;20,000), Premium (over Rs 20,000).</p>\n        <div class=\"chart-wrap\"><canvas id=\"priceChart\"></canvas></div>\n        <div class=\"chart-legend\" id=\"priceLegend\"></div>\n      </div>\n      <div class=\"chart-card\">\n        <h3>Where the demand lives</h3>\n        <p class=\"sub\">Sources grouped by type &mdash; marketplace, social, brand site, local retailer, editorial.</p>\n        <div class=\"chart-wrap\"><canvas id=\"sourceChart\"></canvas></div>\n        <div class=\"chart-legend\" id=\"sourceLegend\"></div>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"charts-section\">\n    <div class=\"charts-heading\"><h2>Price trend over time</h2><span>builds daily as the agent runs</span></div>\n    <div class=\"chart-card\" style=\"max-width:none;\">\n      <h3>Average price ceiling by run date</h3>\n      <p class=\"sub\">Average of the top-end price found each day, normalized to PKR. Fills in automatically as the scheduled workflow keeps running.</p>\n      <div class=\"chart-wrap\" style=\"height:220px;\"><canvas id=\"trendChart\"></canvas></div>\n    </div>\n  </div>\n\n  <div class=\"charts-section\">\n    <div class=\"charts-heading\"><h2>Price spread per keyword</h2><span>floor vs. ceiling, one dot per keyword</span></div>\n    <div class=\"chart-card\" style=\"max-width:none;\">\n      <h3>Price range scatter</h3>\n      <p class=\"sub\">X-axis is the lowest price found for that keyword, Y-axis is the highest. Dots further from the diagonal have the widest price spread.</p>\n      <div class=\"chart-wrap\" style=\"height:280px;\"><canvas id=\"scatterChart\"></canvas></div>\n      <div class=\"chart-legend\" id=\"scatterLegend\"></div>\n    </div>\n  </div>\n\n  <footer>\n    <div>Compiled live from n8n scraper agent → Google Sheets → this page</div>\n    <div>Home Decor Admin Dashboard</div>\n  </footer>\n</div>\n<script>\nfunction buildLegend(el, labels, colors){\n  el.innerHTML = labels.map((l,i)=>'<div class=\"item\"><span class=\"sw\" style=\"background:'+colors[i]+'\"></span>'+l+'</div>').join('');\n}\n\nbuildLegend(document.getElementById('priceLegend'), ${JSON.stringify(tierLabels.map((l, i) => `${l} (${tierValues[i]})`))}, ${JSON.stringify(tierColors)});\nnew Chart(document.getElementById('priceChart'), {\n  type: 'doughnut',\n  data: { labels: ${JSON.stringify(tierLabels)}, datasets: [{ data: ${JSON.stringify(tierValues)}, backgroundColor: ${JSON.stringify(tierColors)}, borderColor: '#FFFCF6', borderWidth: 3 }] },\n  options: { cutout: '62%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.label + ': ' + c.raw + ' keyword' + (c.raw===1?'':'s') } } } }\n});\n\nbuildLegend(document.getElementById('sourceLegend'), ${JSON.stringify(typeLabels.map((l, i) => `${l} (${typeValues[i]})`))}, ${JSON.stringify(typeColors)});\nnew Chart(document.getElementById('sourceChart'), {\n  type: 'pie',\n  data: { labels: ${JSON.stringify(typeLabels)}, datasets: [{ data: ${JSON.stringify(typeValues)}, backgroundColor: ${JSON.stringify(typeColors)}, borderColor: '#FFFCF6', borderWidth: 3 }] },\n  options: { plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.label + ': ' + c.raw } } } }\n});\n\nnew Chart(document.getElementById('trendChart'), {\n  type: 'line',\n  data: {\n    labels: ${JSON.stringify(trendLabels)},\n    datasets: [{\n      label: 'Avg price ceiling (PKR)',\n      data: ${JSON.stringify(trendValues)},\n      borderColor: '#B4502B',\n      backgroundColor: 'rgba(180,80,43,0.12)',\n      pointBackgroundColor: '#B4502B',\n      pointRadius: 5,\n      pointHoverRadius: 7,\n      tension: 0.3,\n      fill: true\n    }]\n  },\n  options: {\n    plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => 'Rs ' + c.raw.toLocaleString() } } },\n    scales: {\n      y: { beginAtZero: false, ticks: { callback: v => 'Rs ' + v.toLocaleString() }, grid: { color: 'rgba(36,31,26,0.08)' } },\n      x: { grid: { display: false } }\n    }\n  }\n});\n\nbuildLegend(document.getElementById('scatterLegend'), ${JSON.stringify(scatterDatasets.map(d => d.label))}, ${JSON.stringify(scatterDatasets.map(d => d.color))});\nnew Chart(document.getElementById('scatterChart'), {\n  type: 'scatter',\n  data: {\n    datasets: ${JSON.stringify(scatterDatasets.map(d => ({ label: d.label, data: d.points, backgroundColor: d.color, pointRadius: 7, pointHoverRadius: 10 })))}\n  },\n  options: {\n    plugins: {\n      legend: { display: false },\n      tooltip: { callbacks: { label: c => c.raw.kw + ': Rs ' + c.raw.x.toLocaleString() + ' – Rs ' + c.raw.y.toLocaleString() } }\n    },\n    scales: {\n      x: { title: { display: true, text: 'Price floor (PKR)' }, ticks: { callback: v => 'Rs ' + v.toLocaleString() }, grid: { color: 'rgba(36,31,26,0.08)' } },\n      y: { title: { display: true, text: 'Price ceiling (PKR)' }, ticks: { callback: v => 'Rs ' + v.toLocaleString() }, grid: { color: 'rgba(36,31,26,0.08)' } }\n    }\n  }\n});\n\ndocument.querySelectorAll('.filt-btn').forEach(btn=>{\n  btn.addEventListener('click', ()=>{\n    document.querySelectorAll('.filt-btn').forEach(b=>b.classList.remove('active'));\n    btn.classList.add('active');\n    const f = btn.dataset.f;\n    document.querySelectorAll('.card').forEach(c=>{\n      c.classList.toggle('hidden', f !== 'all' && c.dataset.price !== f);\n    });\n  });\n});\n</script>\n</body>\n</html>`;\n\nreturn [{ json: { html } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3232,
+        912
+      ],
+      "id": "caf9c128-9da9-4cc7-9065-2a90e664450b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Name ",
+                "value": "Content-Type"
+              },
+              {
+                "name": "Value",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        3424,
+        912
+      ],
+      "id": "dcc48f41-53b0-4e07-871c-6c12c8e7e00f",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "content": "## Dashboard",
+        "height": 368,
+        "width": 848,
+        "color": "#F4C8C8"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2864,
+        784
+      ],
+      "typeVersion": 1,
+      "id": "2f8da9e3-3f96-4d88-8f9f-34d7c2e59539",
+      "name": "Sticky Note6"
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger1": [
+      {
+        "json": {
+          "timestamp": "2026-07-15T14:42:20.747-04:00",
+          "Readable date": "July 15th 2026, 2:42:20 pm",
+          "Readable time": "2:42:20 pm",
+          "Day of week": "Wednesday",
+          "Year": "2026",
+          "Month": "July",
+          "Day of month": "15",
+          "Hour": "14",
+          "Minute": "42",
+          "Second": "20",
+          "Timezone": "America/New_York (UTC-04:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Respond to Webhook1": [
+      {
+        "json": {
+          "html": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<title>Handmade Decor — Market Scan</title>\n<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n<link href=\"https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap\" rel=\"stylesheet\">\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js\"></script>\n<style>\n  :root{ --paper:#F6F1E7; --ink:#241F1A; --clay:#B4502B; --sage:#5C6E4F; --gold:#B08A2E; --line: rgba(36,31,26,0.14); --card: #FFFCF6; }\n  *{box-sizing:border-box; margin:0; padding:0;}\n  body{ background:var(--paper); color:var(--ink); font-family:'Inter', sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh;\n    background-image: radial-gradient(circle at 1px 1px, rgba(36,31,26,0.06) 1px, transparent 0); background-size: 22px 22px; }\n  .wrap{max-width:1120px; margin:0 auto; padding:56px 28px 90px;}\n  header{ display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1.5px solid var(--ink); padding-bottom:26px; margin-bottom:8px; }\n  .eyebrow{ font-family:'Space Mono', monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--clay); margin-bottom:14px; display:flex; align-items:center; gap:10px; }\n  .eyebrow::before{content:\"●\"; font-size:8px; color:var(--sage);}\n  h1{ font-family:'Fraunces', serif; font-weight:600; font-size:clamp(34px, 5vw, 54px); line-height:1.02; letter-spacing:-0.01em; }\n  h1 em{font-style:italic; font-weight:400; color:var(--clay);}\n  .meta-block{text-align:right; font-family:'Space Mono', monospace; font-size:12px; color:rgba(36,31,26,.6); line-height:1.7;}\n  .meta-block b{color:var(--ink); font-weight:700;}\n  .stats{ display:grid; grid-template-columns:repeat(4,1fr); border-bottom:1.5px solid var(--ink); margin-bottom:46px; }\n  .stat{ padding:22px 20px; border-right:1px solid var(--line); }\n  .stat:last-child{border-right:none;}\n  .stat .n{font-family:'Fraunces', serif; font-size:32px; font-weight:600;}\n  .stat .l{font-size:12px; color:rgba(36,31,26,.6); margin-top:4px;}\n  .intro{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:24px; flex-wrap:wrap; gap:16px; }\n  .intro p{max-width:520px; font-size:14.5px; line-height:1.6; color:rgba(36,31,26,.75);}\n  .filters{display:flex; gap:8px; flex-wrap:wrap;}\n  .filt-btn{ font-family:'Space Mono', monospace; font-size:11.5px; letter-spacing:.02em; padding:9px 15px; border:1px solid var(--ink); background:transparent; color:var(--ink); cursor:pointer; border-radius:100px; transition:.2s; }\n  .filt-btn:hover, .filt-btn.active{background:var(--ink); color:var(--paper);}\n  .thread{height:14px; margin:0 0 30px; overflow:hidden;}\n  .thread svg{width:100%; height:100%; display:block;}\n  .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:18px; }\n  .card{ background:var(--card); border:1px solid var(--line); border-radius:2px; padding:22px 22px 20px; position:relative;\n    opacity:0; transform:translateY(14px); animation: rise .6s ease forwards; transition: box-shadow .25s ease, transform .25s ease, border-color .25s; display:flex; flex-direction:column; gap:14px; }\n  .card:hover{ box-shadow: 0 14px 28px rgba(36,31,26,0.10); transform: translateY(-3px); border-color: var(--ink); }\n  .card .idx{ position:absolute; top:16px; right:20px; font-family:'Space Mono', monospace; font-size:11px; color:rgba(36,31,26,.35); }\n  .kw{ font-family:'Fraunces', serif; font-weight:600; font-size:19px; line-height:1.28; padding-right:32px; }\n  .insight{font-size:13.5px; line-height:1.6; color:rgba(36,31,26,.78);}\n  .price-row{ margin-top:auto; padding-top:14px; border-top:1px dashed var(--line); display:flex; flex-direction:column; gap:8px; }\n  .price-label{ font-family:'Space Mono', monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:rgba(36,31,26,.45); }\n  .price-tag{ display:inline-flex; align-self:flex-start; align-items:center; gap:7px; font-family:'Space Mono', monospace; font-size:13px; font-weight:700; padding:6px 12px; border-radius:100px; }\n  .price-tag.tier-budget{background:rgba(92,110,79,0.14); color:var(--sage); border:1px solid rgba(92,110,79,.35);}\n  .price-tag.tier-mid-range{background:rgba(176,138,46,0.14); color:var(--gold); border:1px solid rgba(176,138,46,.35);}\n  .price-tag.tier-premium{background:rgba(180,80,43,0.10); color:var(--clay); border:1px solid rgba(180,80,43,.28);}\n  .price-tag.tier-no-price{background:rgba(139,94,107,0.10); color:#8B5E6B; border:1px solid rgba(139,94,107,.3);}\n  .price-tag .dot{width:6px; height:6px; border-radius:50%; background:currentColor;}\n  .source{ display:flex; align-items:center; gap:6px; font-size:12px; color:rgba(36,31,26,.65); text-decoration:none; border-bottom:1px solid transparent; }\n  .source:hover{color:var(--clay); border-bottom-color:var(--clay);}\n  .source .arrow{font-size:12px; transition:transform .2s;}\n  .source:hover .arrow{transform:translate(2px,-2px);}\n  .card.hidden{display:none;}\n  .charts-section{margin:46px 0 50px;}\n  .charts-heading{display:flex; align-items:baseline; gap:12px; margin-bottom:20px;}\n  .charts-heading h2{font-family:'Fraunces', serif; font-weight:600; font-size:22px;}\n  .charts-heading span{font-family:'Space Mono', monospace; font-size:11px; color:rgba(36,31,26,.5);}\n  .charts-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px;}\n  .chart-card{background:var(--card); border:1px solid var(--line); border-radius:2px; padding:24px 24px 18px;}\n  .chart-card h3{font-family:'Space Mono', monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:rgba(36,31,26,.55); margin-bottom:4px;}\n  .chart-card p.sub{font-size:12.5px; color:rgba(36,31,26,.55); margin-bottom:16px;}\n  .chart-wrap{position:relative; height:230px; display:flex; align-items:center; justify-content:center;}\n  .chart-legend{display:flex; flex-wrap:wrap; gap:10px 18px; margin-top:16px; justify-content:center;}\n  .chart-legend .item{display:flex; align-items:center; gap:7px; font-size:12px; color:rgba(36,31,26,.75);}\n  .chart-legend .sw{width:9px; height:9px; border-radius:2px; flex-shrink:0;}\n  @media (max-width:760px){.charts-grid{grid-template-columns:1fr;}}\n  footer{ margin-top:60px; padding-top:20px; border-top:1px solid var(--line); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-family:'Space Mono', monospace; font-size:11px; color:rgba(36,31,26,.5); }\n  @keyframes rise{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }\n  @media (max-width:640px){ header{flex-direction:column; align-items:flex-start; gap:16px;} .meta-block{text-align:left;} .stats{grid-template-columns:repeat(2,1fr);} .stat:nth-child(2){border-right:none;} }\n  :focus-visible{ outline:2px solid var(--clay); outline-offset:2px; }\n  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }\n</style>\n</head>\n<body>\n<div class=\"wrap\">\n  <header>\n    <div>\n      <div class=\"eyebrow\">Competitor Intelligence · Handmade Decor</div>\n      <h1>Market scan,<br><em>8 signals</em> deep.</h1>\n    </div>\n    <div class=\"meta-block\">\n      <div>REGION <b>Pakistan</b></div>\n      <div>LAST RUN <b>15 Jul 2026</b></div>\n      <div>SOURCES <b>7 tracked</b></div>\n    </div>\n  </header>\n  <div class=\"stats\">\n    <div class=\"stat\"><div class=\"n\">8</div><div class=\"l\">Keywords tracked</div></div>\n    <div class=\"stat\"><div class=\"n\">7</div><div class=\"l\">Unique sources</div></div>\n    <div class=\"stat\"><div class=\"n\">8</div><div class=\"l\">With hard pricing</div></div>\n    <div class=\"stat\"><div class=\"n\">2026</div><div class=\"l\">Trend horizon</div></div>\n  </div>\n  <div class=\"intro\">\n    <p>Live feed from the daily scraper agent — pulled fresh from the sheet on every page load, so this always reflects this morning's run.</p>\n    <div class=\"filters\"><button class=\"filt-btn active\" data-f=\"all\">All 8</button><button class=\"filt-btn \" data-f=\"Mid-range\">Mid-range</button><button class=\"filt-btn \" data-f=\"Premium\">Premium</button></div>\n  </div>\n  <div class=\"thread\">\n    <svg viewBox=\"0 0 1120 14\" preserveAspectRatio=\"none\">\n      <path d=\"M0,7 C 40,-2 80,16 120,7 S 200,-2 240,7 S 320,16 360,7 S 440,-2 480,7 S 560,16 600,7 S 680,-2 720,7 S 800,16 840,7 S 920,-2 960,7 S 1040,16 1080,7 S 1140,7 1120,7\" stroke=\"#B4502B\" stroke-width=\"1.4\" fill=\"none\" opacity=\"0.55\"/>\n    </svg>\n  </div>\n  <div class=\"grid\" id=\"grid\">\n    <div class=\"card\" data-price=\"Premium\" style=\"animation-delay:0s\">\n      <span class=\"idx\">01</span>\n      <div class=\"kw\">handmade wall decor trends 2026</div>\n      <div class=\"insight\"> Geometric patterns and natural materials are expected to dominate handmade wall decor trends in 2026.</div>\n      <div class=\"price-row\">\n        <span class=\"price-label\">Price signal &middot; Premium</span>\n        <span class=\"price-tag tier-premium\"><span class=\"dot\"></span>$20-$100</span>\n        <a class=\"source\" href=\"https://www.etsy.com/pakistan/search?q=handmade+wall+decor+trends+2026\" target=\"_blank\" rel=\"noopener\">Etsy<span class=\"arrow\">↗</span></a>\n      </div>\n    </div>\n    <div class=\"card\" data-price=\"Premium\" style=\"animation-delay:0.05s\">\n      <span class=\"idx\">02</span>\n      <div class=\"kw\">best handmade gift shop Lahore</div>\n      <div class=\"insight\"> There is a notable online interest in finding the best handmade gift shops in Lahore, indicating a demand for unique, locally crafted items.</div>\n      <div class=\"price-row\">\n        <span class=\"price-label\">Price signal &middot; Premium</span>\n        <span class=\"price-tag tier-premium\"><span class=\"dot\"></span>Rs.3500 to 50000</span>\n        <a class=\"source\" href=\"https://www.khooblahore.com/\" target=\"_blank\" rel=\"noopener\">Khoob Lahore<span class=\"arrow\">↗</span></a>\n      </div>\n    </div>\n    <div class=\"card\" data-price=\"Mid-range\" style=\"animation-delay:0.1s\">\n      <span class=\"idx\">03</span>\n      <div class=\"kw\">handmade decoration pieces Instagram Pakistan</div>\n      <div class=\"insight\"> There is a growing interest in handmade decoration pieces on Instagram in Pakistan.</div>\n      <div class=\"price-row\">\n        <span class=\"price-label\">Price signal &middot; Mid-range</span>\n        <span class=\"price-tag tier-mid-range\"><span class=\"dot\"></span>Rs.2000 to 15000</span>\n        <a class=\"source\" href=\"https://www.instagram.com/wovenbyasma/\" target=\"_blank\" rel=\"noopener\">Woven By Asma<span class=\"arrow\">↗</span></a>\n      </div>\n    </div>\n    <div class=\"card\" data-price=\"Premium\" style=\"animation-delay:0.15000000000000002s\">\n      <span class=\"idx\">04</span>\n      <div class=\"kw\">resin art home decor price</div>\n      <div class=\"insight\"> The search results indicate a significant interest in resin art home decor, suggesting a growing demand for unique, handmade decorative items.</div>\n      <div class=\"price-row\">\n        <span class=\"price-label\">Price signal &middot; Premium</span>\n        <span class=\"price-tag tier-premium\"><span class=\"dot\"></span>PKR 2,500 - PKR 50,000</span>\n        <a class=\"source\" href=\"https://www.etsy.com/pakistan/search?q=resin+art+home+decor\" target=\"_blank\" rel=\"noopener\">Etsy<span class=\"arrow\">↗</span></a>\n      </div>\n    </div>\n    <div class=\"card\" data-price=\"Premium\" style=\"animation-delay:0.2s\">\n      <span class=\"idx\">05</span>\n      <div class=\"kw\">macrame wall hanging price Pakistan</div>\n      <div class=\"insight\"> The search results indicate a demand for macrame wall hangings in Pakistan, suggesting a growing interest in handmade home decor.</div>\n      <div class=\"price-row\">\n        <span class=\"price-label\">Price signal &middot; Premium</span>\n        <span class=\"price-tag tier-premium\"><span class=\"dot\"></span>₨500 - ₨5,000 (approximately $3-$30 USD)</span>\n        <a class=\"source\" href=\"https://www.daraz.pk/macrame-wall-hanging/\" target=\"_blank\" rel=\"noopener\">Daraz.pk<span class=\"arrow\">↗</span></a>\n      </div>\n    </div>\n    <div class=\"card\" data-price=\"Mid-range\" style=\"animation-delay:0.25s\">\n      <span class=\"idx\">06</span>\n      <div class=\"kw\">handmade decor online store Pakistan</div>\n      <div class=\"insight\"> There is a growing demand for online stores selling handmade decor in Pakistan.</div>\n      <div class=\"price-row\">\n        <span class=\"price-label\">Price signal &middot; Mid-range</span>\n        <span class=\"price-tag tier-mid-range\"><span class=\"dot\"></span>Rs,1000 to Rs.10000</span>\n        <a class=\"source\" href=\"https://www.khoobsurat.pk/\" target=\"_blank\" rel=\"noopener\">Khoobsurat<span class=\"arrow\">↗</span></a>\n      </div>\n    </div>\n    <div class=\"card\" data-price=\"Premium\" style=\"animation-delay:0.30000000000000004s\">\n      <span class=\"idx\">07</span>\n      <div class=\"kw\">Ideas by Gul Ahmed decor price</div>\n      <div class=\"insight\"> People searching for \"Ideas by Gul Ahmed decor price\" are likely looking for home decor inspiration and pricing information from Gul Ahmed, a well-known Pakistani textile and home decor brand.</div>\n      <div class=\"price-row\">\n        <span class=\"price-label\">Price signal &middot; Premium</span>\n        <span class=\"price-tag tier-premium\"><span class=\"dot\"></span>Rs,10000 to Rs.50000</span>\n        <a class=\"source\" href=\"https://www.gulahmed.com/ or similar (exact link not available)\" target=\"_blank\" rel=\"noopener\">Gul Ahmed<span class=\"arrow\">↗</span></a>\n      </div>\n    </div>\n    <div class=\"card\" data-price=\"Mid-range\" style=\"animation-delay:0.35000000000000003s\">\n      <span class=\"idx\">08</span>\n      <div class=\"kw\">trending home decor colors 2026</div>\n      <div class=\"insight\"> Earthy tones and soft pastels are expected to dominate home decor color trends in 2026.</div>\n      <div class=\"price-row\">\n        <span class=\"price-label\">Price signal &middot; Mid-range</span>\n        <span class=\"price-tag tier-mid-range\"><span class=\"dot\"></span>Rs.5000 to 10000</span>\n        <a class=\"source\" href=\"https://www.architecturaldigest.com/\" target=\"_blank\" rel=\"noopener\">Architectural Digest<span class=\"arrow\">↗</span></a>\n      </div>\n    </div></div>\n\n  <div class=\"charts-section\">\n    <div class=\"charts-heading\"><h2>Market breakdown</h2><span>2 views &middot; same 8 signals</span></div>\n    <div class=\"charts-grid\">\n      <div class=\"chart-card\">\n        <h3>Price range distribution</h3>\n        <p class=\"sub\">Keywords grouped by tier — Budget (under Rs 5,000), Mid-range (Rs 5,000&ndash;20,000), Premium (over Rs 20,000).</p>\n        <div class=\"chart-wrap\"><canvas id=\"priceChart\"></canvas></div>\n        <div class=\"chart-legend\" id=\"priceLegend\"></div>\n      </div>\n      <div class=\"chart-card\">\n        <h3>Where the demand lives</h3>\n        <p class=\"sub\">Sources grouped by type &mdash; marketplace, social, brand site, local retailer, editorial.</p>\n        <div class=\"chart-wrap\"><canvas id=\"sourceChart\"></canvas></div>\n        <div class=\"chart-legend\" id=\"sourceLegend\"></div>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"charts-section\">\n    <div class=\"charts-heading\"><h2>Price trend over time</h2><span>builds daily as the agent runs</span></div>\n    <div class=\"chart-card\" style=\"max-width:none;\">\n      <h3>Average price ceiling by run date</h3>\n      <p class=\"sub\">Average of the top-end price found each day, normalized to PKR. Fills in automatically as the scheduled workflow keeps running.</p>\n      <div class=\"chart-wrap\" style=\"height:220px;\"><canvas id=\"trendChart\"></canvas></div>\n    </div>\n  </div>\n\n  <div class=\"charts-section\">\n    <div class=\"charts-heading\"><h2>Price spread per keyword</h2><span>floor vs. ceiling, one dot per keyword</span></div>\n    <div class=\"chart-card\" style=\"max-width:none;\">\n      <h3>Price range scatter</h3>\n      <p class=\"sub\">X-axis is the lowest price found for that keyword, Y-axis is the highest. Dots further from the diagonal have the widest price spread.</p>\n      <div class=\"chart-wrap\" style=\"height:280px;\"><canvas id=\"scatterChart\"></canvas></div>\n      <div class=\"chart-legend\" id=\"scatterLegend\"></div>\n    </div>\n  </div>\n\n  <footer>\n    <div>Compiled live from n8n scraper agent → Google Sheets → this page</div>\n    <div>Home Decor Admin Dashboard</div>\n  </footer>\n</div>\n<script>\nfunction buildLegend(el, labels, colors){\n  el.innerHTML = labels.map((l,i)=>'<div class=\"item\"><span class=\"sw\" style=\"background:'+colors[i]+'\"></span>'+l+'</div>').join('');\n}\n\nbuildLegend(document.getElementById('priceLegend'), [\"Mid-range (3)\",\"Premium (5)\"], [\"#B08A2E\",\"#B4502B\"]);\nnew Chart(document.getElementById('priceChart'), {\n  type: 'doughnut',\n  data: { labels: [\"Mid-range\",\"Premium\"], datasets: [{ data: [3,5], backgroundColor: [\"#B08A2E\",\"#B4502B\"], borderColor: '#FFFCF6', borderWidth: 3 }] },\n  options: { cutout: '62%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.label + ': ' + c.raw + ' keyword' + (c.raw===1?'':'s') } } } }\n});\n\nbuildLegend(document.getElementById('sourceLegend'), [\"Marketplace (3)\",\"Local retailer (2)\",\"Social (1)\",\"Brand site (1)\",\"Editorial (1)\"], [\"#B4502B\",\"#5C6E4F\",\"#B08A2E\",\"#7A8CA3\",\"#8B5E6B\"]);\nnew Chart(document.getElementById('sourceChart'), {\n  type: 'pie',\n  data: { labels: [\"Marketplace\",\"Local retailer\",\"Social\",\"Brand site\",\"Editorial\"], datasets: [{ data: [3,2,1,1,1], backgroundColor: [\"#B4502B\",\"#5C6E4F\",\"#B08A2E\",\"#7A8CA3\",\"#8B5E6B\"], borderColor: '#FFFCF6', borderWidth: 3 }] },\n  options: { plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.label + ': ' + c.raw } } } }\n});\n\nnew Chart(document.getElementById('trendChart'), {\n  type: 'line',\n  data: {\n    labels: [\"15 Jul\"],\n    datasets: [{\n      label: 'Avg price ceiling (PKR)',\n      data: [201625],\n      borderColor: '#B4502B',\n      backgroundColor: 'rgba(180,80,43,0.12)',\n      pointBackgroundColor: '#B4502B',\n      pointRadius: 5,\n      pointHoverRadius: 7,\n      tension: 0.3,\n      fill: true\n    }]\n  },\n  options: {\n    plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => 'Rs ' + c.raw.toLocaleString() } } },\n    scales: {\n      y: { beginAtZero: false, ticks: { callback: v => 'Rs ' + v.toLocaleString() }, grid: { color: 'rgba(36,31,26,0.08)' } },\n      x: { grid: { display: false } }\n    }\n  }\n});\n\nbuildLegend(document.getElementById('scatterLegend'), [\"Premium\",\"Mid-range\"], [\"#B4502B\",\"#B08A2E\"]);\nnew Chart(document.getElementById('scatterChart'), {\n  type: 'scatter',\n  data: {\n    datasets: [{\"label\":\"Premium\",\"data\":[{\"x\":5600,\"y\":28000,\"kw\":\"handmade wall decor trends 2026\"},{\"x\":3500,\"y\":50000,\"kw\":\"best handmade gift shop Lahore\"},{\"x\":2500,\"y\":50000,\"kw\":\"resin art home decor price\"},{\"x\":840,\"y\":1400000,\"kw\":\"macrame wall hanging price Pakistan\"},{\"x\":10000,\"y\":50000,\"kw\":\"Ideas by Gul Ahmed decor price\"}],\"backgroundColor\":\"#B4502B\",\"pointRadius\":7,\"pointHoverRadius\":10},{\"label\":\"Mid-range\",\"data\":[{\"x\":2000,\"y\":15000,\"kw\":\"handmade decoration pieces Instagram Pakistan\"},{\"x\":1000,\"y\":10000,\"kw\":\"handmade decor online store Pakistan\"},{\"x\":5000,\"y\":10000,\"kw\":\"trending home decor colors 2026\"}],\"backgroundColor\":\"#B08A2E\",\"pointRadius\":7,\"pointHoverRadius\":10}]\n  },\n  options: {\n    plugins: {\n      legend: { display: false },\n      tooltip: { callbacks: { label: c => c.raw.kw + ': Rs ' + c.raw.x.toLocaleString() + ' – Rs ' + c.raw.y.toLocaleString() } }\n    },\n    scales: {\n      x: { title: { display: true, text: 'Price floor (PKR)' }, ticks: { callback: v => 'Rs ' + v.toLocaleString() }, grid: { color: 'rgba(36,31,26,0.08)' } },\n      y: { title: { display: true, text: 'Price ceiling (PKR)' }, ticks: { callback: v => 'Rs ' + v.toLocaleString() }, grid: { color: 'rgba(36,31,26,0.08)' } }\n    }\n  }\n});\n\ndocument.querySelectorAll('.filt-btn').forEach(btn=>{\n  btn.addEventListener('click', ()=>{\n    document.querySelectorAll('.filt-btn').forEach(b=>b.classList.remove('active'));\n    btn.classList.add('active');\n    const f = btn.dataset.f;\n    document.querySelectorAll('.card').forEach(c=>{\n      c.classList.toggle('hidden', f !== 'all' && c.dataset.price !== f);\n    });\n  });\n});\n</script>\n</body>\n</html>"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "NEW_ CUSTOMER",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "returning customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "NEW_ CUSTOMER",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "returning customer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NEW_ CUSTOMER": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "returning customer": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Order sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Order sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter Pending Deliveries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Pending Deliveries": {
+      "main": [
+        [
+          {
+            "node": "Any Pending deliveries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any Pending deliveries": {
+      "main": [
+        [
+          {
+            "node": "Build OWNER deivery Report",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "CUSTOMER NOTIFICATION",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build OWNER deivery Report": {
+      "main": [
+        [
+          {
+            "node": "send mESSAGE TO OWNER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CUSTOMER NOTIFICATION": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Send Customer WhatsApp Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send mESSAGE TO OWNER": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook2": {
+      "main": [
+        [
+          {
+            "node": "Question and Answer Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Question and Answer Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Retriever": {
+      "ai_retriever": [
+        [
+          {
+            "node": "Question and Answer Chain",
+            "type": "ai_retriever",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Question and Answer Chain": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Retriever",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ADD Product": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Product": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete product": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Send a message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook3": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "8ef3d7e8-9380-4fe9-b648-b5bf928cfa55",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dd592145a5c72f485a7c0ff181533ebe1b96d9ee088109b80d9e8407d87ddfc4"
+  },
+  "id": "9fqVxvpOZS8MNib4",
+  "tags": []
+}
