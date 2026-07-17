@@ -5,3 +5,6 @@ __pycache__/
 *.pyc 
 venv/ 
 __pycache__/ 
+* 
+!fankaar*khana.json 
+!.gitignore 
