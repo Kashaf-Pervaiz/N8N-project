@@ -6,7 +6,7 @@ Fankaar Khana is an artisanal creative business transitioning from chaotic, manu
 
 ---
 
-## 🏗️ System Architecture Overview
+## System Architecture Overview
 
 The system is designed with a **decentralized hub-and-spoke model**. Agents do not loop endlessly; instead, they communicate asynchronously using a centralized PostgreSQL/Supabase database as a single source of truth.
 
