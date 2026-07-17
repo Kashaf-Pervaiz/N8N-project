@@ -2,7 +2,13 @@
 
 *A connected system of AI agents that takes orders, answers customers, tracks deliveries, and watches the market — so nothing runs on memory alone.*
 
-`n8n` `Groq` `Pinecone` `Google Sheets` `Status: Active`
+<p>
+  <img src="https://img.shields.io/badge/n8n-EA4B71?style=flat&logo=n8n&logoColor=white" />
+  <img src="https://img.shields.io/badge/Groq-F55036?style=flat&logo=groq&logoColor=white" />
+  <img src="https://img.shields.io/badge/Pinecone-000000?style=flat&logo=pinecone&logoColor=white" />
+  <img src="https://img.shields.io/badge/Google%20Sheets-34A853?style=flat&logo=googlesheets&logoColor=white" />
+  <img src="https://img.shields.io/badge/Status-Active-2E8B57?style=flat" />
+</p>
 
 ## The Problem
 
@@ -43,6 +49,7 @@ n8n · Groq (LLM Chat Model) · Pinecone (vector search/RAG) · HuggingFace Embe
 
 ## Author
 
-**Kashaf Pervaiz** — [kashafpervaiz15@gmail.com](mailto:kashafpervaiz15@gmail.com) · [LinkedIn](https://www.linkedin.com/in/kashaf-pervaiz-67a23038a)
+**Kashaf Pervaiz** — [kashafpervaiz15@gmail.com](mailto:kashafpervaiz15@gmail.com) 
+·[LinkedIn](https://www.linkedin.com/in/kashaf-pervaiz-67a23038a)
 
 ⭐ If you find this project interesting, feel free to star the repo!
