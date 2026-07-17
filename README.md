@@ -36,28 +36,6 @@ Every order for Fankaar Khana used to start as a message, a call, or a walk-in n
 Fankaar Khana runs on an automation layer built in **n8n**. Six agents each own one job — taking orders, answering customers, chasing deliveries, handling complaints, managing inventory, and tracking competitors — feeding into a shared dashboard so nothing runs on memory alone.
 
 
-##  Tech Stack
-
-| Component | Tool |
-|---|---|
-| Automation / orchestration | ![n8n](https://img.shields.io/badge/-n8n-EA4B71?style=flat-square&logo=n8n&logoColor=white) |
-| LLM | ![Groq](https://img.shields.io/badge/-Groq-F55036?style=flat-square&logo=groq&logoColor=white) (Chat Model, multiple agents) |
-| Vector search / RAG | ![Pinecone](https://img.shields.io/badge/-Pinecone-000000?style=flat-square&logo=pinecone&logoColor=white) |
-| Embeddings | ![HuggingFace](https://img.shields.io/badge/-HuggingFace-FFD21E?style=flat-square&logo=huggingface&logoColor=black) |
-| Data storage | ![Google Sheets](https://img.shields.io/badge/-Google_Sheets-34A853?style=flat-square&logo=googlesheets&logoColor=white) |
-| Notifications | ![Gmail](https://img.shields.io/badge/-Gmail-EA4335?style=flat-square&logo=gmail&logoColor=white) ![WhatsApp](https://img.shields.io/badge/-WhatsApp-25D366?style=flat-square&logo=whatsapp&logoColor=white) |
-| File ingestion | ![Google Drive](https://img.shields.io/badge/-Google_Drive-4285F4?style=flat-square&logo=googledrive&logoColor=white) |
-| Custom logic | ![JavaScript](https://img.shields.io/badge/-JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black) ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white) |
-
-##  Getting Started
-
-1. **Import the workflow** into your n8n instance:
-   - Go to n8n → **Workflows** → **Import from File**
-   - Select `fankaar khana.json`
-2. **Set up credentials** for each connected service: Google Sheets, Gmail, Google Drive, Groq, Pinecone, HuggingFace, and your WhatsApp API endpoint.
-3. **Point each Sheet node** at your actual order/inventory/complaint/competitor sheets.
-4. **Activate the workflow** — the agents will begin listening for triggers and running automatically.
-
 ##  Repository Structure
 
 ```
